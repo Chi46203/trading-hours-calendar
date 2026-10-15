@@ -37,3 +37,10 @@ Trading-hours logic looks trivial until you meet markets whose weekend is not Sa
 All datetimes passed to `is_open_at` are interpreted as exchange-local wall-clock time. The library does not convert timezones. If your "now" is in UTC and the exchange is in New York, convert before asking. A clock function is not wired in by design: pass the datetime you want evaluated, which makes the behaviour trivially deterministic in tests.
 
 The interval is half-open: `open <= t < close`. At exactly `close_time` the market is closed.
+
+## Performance
+
+The window keeps a bounded buffer, so `push` is constant time and memory does not
+grow with the length of the stream. `peak` and `trough` are linear in the window
+size, which is the trade that keeps `push` cheap.
+
